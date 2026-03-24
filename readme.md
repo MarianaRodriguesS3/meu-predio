@@ -87,10 +87,26 @@ Nesta seção, detalhamos os 10 pontos fundamentais que guiaram o desenvolviment
 
 ---
 
+## 🛠️ QA (Quality Assurance) do Projeto
+
+1. Ícone na barra de busca: Check-list de QA Final da Busca: Para considerares esta tarefa "100% concluída", faz estes três testes rápidos no teu navegador:
+
+- [x] Teste de Sobreposição: Digita uma frase bem longa. O texto deve "desaparecer" antes de tocar na lupa (isso confirma que o padding-right: 60px está a funcionar).
+- [x] Teste de Clique: Tenta clicar exatamente em cima da lupa. O cursor deve aparecer dentro do campo de texto (isso confirma que o pointer-events: none está a funcionar).
+- [x] Teste de Responsividade: Diminui o tamanho da janela do navegador. A lupa deve manter-se fixa na direita, acompanhando o redimensionamento da barra.
+
+2. Responsividade 
+
+
+---
+
+
 ## 🚀 Próximos passos
 
 
-1. design das salas vazias para o próximo nível, podemos adicionar um Botão de WhatsApp apenas nos cards vazios. Assim, quando o interessado clicar, ele abre o chat direto com o setor de locação do prédio já com uma mensagem automática:
+1. botão de whatsapp fixo
+
+2. design das salas vazias para o próximo nível, podemos adicionar um Botão de WhatsApp apenas nos cards vazios. Assim, quando o interessado clicar, ele abre o chat direto com o setor de locação do prédio já com uma mensagem automática:
 
 "Olá! Vi no site que a sala [X] no [Y] andar está disponível. Gostaria de mais informações."
 

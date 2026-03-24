@@ -63,15 +63,20 @@ body {
 }
 
 /* 4. Barra de Pesquisa */
+/* 1. Container */
 .search-container {
   position: relative;
   max-width: 600px;
   margin: -75px auto 40px;
+  z-index: 10;
 }
 
+/* 2. O Input */
 #searchInput {
+  position: relative;
+  z-index: 1; /* Baixamos para 1 */
   width: 100%;
-  padding: 20px 30px;
+  padding: 20px 60px 20px 30px;
   border-radius: 50px;
   border: none;
   background: var(--bg-card);
@@ -79,6 +84,25 @@ body {
   box-shadow: var(--shadow);
   font-size: 1rem;
   outline: none;
+  transition: all 0.3s ease;
+}
+
+/* 3. A Lupa */
+.search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* AQUI ESTÁ O SEGREDO */
+  z-index: 2; /* Apenas 1 nível acima do input */
+  pointer-events: none !important;
+
+  /* Adiciona isto para teste: */
+  cursor: text;
+
+  font-size: 1.2rem;
+  color: var(--text-muted);
 }
 
 /* 5. Filtros */
