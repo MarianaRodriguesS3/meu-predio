@@ -97,6 +97,7 @@ Nesta seção, detalhamos os 10 pontos fundamentais que guiaram o desenvolviment
 
 2. Responsividade 
 
+- [x] Teste do smartphone 
 
 ---
 
