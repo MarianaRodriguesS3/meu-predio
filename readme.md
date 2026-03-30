@@ -118,221 +118,397 @@ _Desenvolvido com foco em alta performance e design moderno._
 
 ## 🚀 Comentários de melhoria segundo a IA
 
-Seu código está bem organizado e funcional — especialmente pela normalização de texto e separação das funções. Mas dá pra melhorar bastante em performance, UX e uso de memória, principalmente se essa lista crescer.
+Analise o código a cima e me apresente melhorias no código para que ele tenha uma melhor Usabilidade (UX/UI), Tempo de resposta (Performance), melhor Performance de armazenamento (Consultas otimizadas), Escalabilidade, Segurança Confiabilidade e estabilidade, Manutenibilidade, Integração e Observabilidade.
 
-Vou te mostrar problemas atuais + soluções mais eficientes 👇
+Seu código já está bem organizado e funcional — especialmente na separação de responsabilidades e na UX inicial com skeletons 👏. Mas dá pra evoluir bastante em várias dimensões. Vou direto ao que realmente traz ganho prático.
 
-🔍 Problemas atuais
-1. Busca linear (O(n))
+🔧 1. Usabilidade (UX/UI)
+✅ Problemas
+Busca dispara a cada ação manual (não é fluida)
+Falta feedback de “digitando”
+Filtros não combinam entre si
+Não há estado vazio amigável para filtros
+Cards não têm hierarquia visual forte
+🚀 Melhorias
+🔹 Debounce na busca
 
-Toda vez que o usuário digita, você percorre toda a lista (filter):
-
-const resultados = estabelecimentos.filter(...)
-
-👉 Isso funciona bem com poucos itens, mas escala mal.
-
-2. Normalização repetida (custo alto)
-
-Você roda normalizar() toda vez que busca, inclusive concatenando strings:
-
-const conteudo = normalizar(`${e.nome} ${e.desc} ${e.sala} ${e.cat} ${e.andar}`);
-
-👉 Isso é caro e repetitivo.
-
-3. Busca “crua” (sem inteligência)
-Não prioriza resultados mais relevantes
-Não tolera erros de digitação
-Não sugere nada ao usuário
-4. Renderização completa sempre
-
-Você recria todo o HTML mesmo para pequenas mudanças.
-
-🚀 Melhorias recomendadas
-
-✅ 1. Pré-indexação (GRANDE ganho de performance)
-
-Pré-processar os dados uma única vez:
-
-const estabelecimentosIndexados = estabelecimentos.map((e) => ({
-  ...e,
-  searchKey: normalizar(`${e.nome} ${e.desc} ${e.sala} ${e.cat} ${e.andar}`)
-}));
-Nova busca:
-function buscar() {
-  const termo = normalizar(document.getElementById("searchInput").value);
-
-  const resultados = estabelecimentosIndexados.filter((e) =>
-    e.searchKey.includes(termo)
-  );
-
-  renderizarCards(resultados);
-}
-
-✅ Vantagens:
-
-Muito mais rápido
-Evita recomputar strings
-Melhor uso de CPU
-⚡ 2. Debounce (melhora absurda de UX + performance)
-
-Evita rodar busca a cada tecla:
+Evita travar UI enquanto digita:
 
 let timeout;
-
-function buscarComDebounce() {
+function buscarDebounced() {
   clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    buscar();
-  }, 300);
+  timeout = setTimeout(buscar, 300);
 }
 
 👉 Use no input:
 
-<input oninput="buscarComDebounce()" />
+<input oninput="buscarDebounced()" />
+🔹 Estado de loading real (não fake)
 
-✅ Resultado:
+Hoje você usa setTimeout. Melhor simular apenas quando necessário:
 
-Menos travamentos
-Busca mais suave
-🧠 3. Busca com relevância (ranking simples)
-
-Hoje tudo tem o mesmo peso.
-
-Você pode priorizar:
-
-function buscar() {
-  const termo = normalizar(document.getElementById("searchInput").value);
-
-  const resultados = estabelecimentosIndexados
-    .map((e) => {
-      let score = 0;
-
-      if (e.searchKey.includes(termo)) score += 1;
-      if (normalizar(e.nome).includes(termo)) score += 3;
-      if (normalizar(e.sala).includes(termo)) score += 5;
-
-      return { ...e, score };
-    })
-    .filter((e) => e.score > 0)
-    .sort((a, b) => b.score - a.score);
-
-  renderizarCards(resultados);
+async function carregarDados() {
+  exibirSkeletons();
+  const dados = await fetchDados(); // futuro backend
+  renderizarCards(dados);
 }
+🔹 Melhor feedback vazio
+container.innerHTML = `
+  <div class="empty-state">
+    <h3>Nenhum resultado encontrado</h3>
+    <p>Tente ajustar sua busca ou filtros.</p>
+  </div>
+`;
+🔹 Combinar busca + filtro
 
-✅ Melhor:
+Hoje eles não se conversam. Crie estado global:
 
-Sala exata aparece primeiro
-Nome tem prioridade
-UX muito mais inteligente
-🔎 4. Índice por categoria (busca instantânea)
-
-Evita filter sempre:
-
-const indiceCategoria = {};
-
-estabelecimentos.forEach((e) => {
-  if (!indiceCategoria[e.cat]) {
-    indiceCategoria[e.cat] = [];
-  }
-  indiceCategoria[e.cat].push(e);
-});
-Uso:
-function filter(categoria) {
-  if (categoria === "todos") {
-    renderizarCards(estabelecimentos);
-  } else {
-    renderizarCards(indiceCategoria[categoria] || []);
-  }
-}
-
-✅ Vantagem:
-
-O(1) acesso
-Muito rápido
-🧩 5. Virtualização (se tiver MUITOS dados)
-
-Se crescer para centenas/milhares:
-
-👉 Renderize só o que aparece na tela
-
-Ex:
-
-usar IntersectionObserver
-ou libs como:
-virtual-scroller
-💾 6. Redução de memória
-
-Hoje você guarda várias strings repetidas.
-
-Melhoria:
-
-Opção A — IDs + dicionário
-const categorias = {
-  saude: "Saúde",
-  direito: "Direito"
+let estado = {
+  busca: "",
+  categoria: "todos",
+  somenteVazias: false
 };
-Opção B — minimizar duplicação
-evitar concatenar strings gigantes
-usar campos separados no índice
 
-✨ 7. Melhor UX de busca
-Sugestões:
-Mostrar resultados enquanto digita
-Destacar termo buscado
-Mostrar contador:
-<p>${resultados.length} resultados encontrados</p>
+E um único renderizador:
 
-🧠 8. Busca fuzzy (nível profissional)
+function aplicarFiltros() {
+  let lista = [...estabelecimentos];
 
-Use biblioteca leve tipo:
+  if (estado.busca) {
+    lista = lista.filter(e =>
+      normalizar(`${e.nome} ${e.desc} ${e.sala}`)
+        .includes(estado.busca)
+    );
+  }
 
-Fuse.js
+  if (estado.categoria !== "todos") {
+    lista = lista.filter(e => e.cat === estado.categoria);
+  }
 
-Exemplo:
+  if (estado.somenteVazias) {
+    lista = lista.filter(e => e.vazia);
+  }
 
-const fuse = new Fuse(estabelecimentos, {
-  keys: ["nome", "desc", "sala"],
-  threshold: 0.3
+  renderizarCards(lista);
+}
+⚡ 2. Performance (tempo de resposta)
+✅ Problemas
+.map().join("") com lista grande pode travar
+Re-render completo sempre
+Normalização repetida a cada busca
+🚀 Melhorias
+🔹 Pré-processamento (cache de busca)
+const estabelecimentosProcessados = estabelecimentos.map(e => ({
+  ...e,
+  _search: normalizar(`${e.nome} ${e.desc} ${e.sala} ${e.cat}`)
+}));
+
+Busca vira:
+
+e._search.includes(termo)
+
+🔥 Ganho enorme em listas grandes.
+
+🔹 Virtualização (para escala)
+
+Se passar de ~200 itens:
+
+renderizar só visíveis
+usar IntersectionObserver
+🔹 Evitar reflow pesado
+
+Use documentFragment:
+
+const fragment = document.createDocumentFragment();
+lista.forEach(item => {
+  const el = document.createElement("article");
+  el.className = "card";
+  el.innerHTML = ...
+  fragment.appendChild(el);
+});
+container.innerHTML = "";
+container.appendChild(fragment);
+💾 3. Performance de armazenamento / consultas
+🔹 Estrutura indexada por categoria
+const index = {
+  Saude: [],
+  Direito: [],
+  Estetica: [],
+  vazias: []
+};
+
+Na carga:
+
+estabelecimentos.forEach(e => {
+  if (e.vazia) index.vazias.push(e);
+  else index[e.cat]?.push(e);
 });
 
-function buscar() {
-  const termo = document.getElementById("searchInput").value;
-  const resultados = fuse.search(termo).map(r => r.item);
-  renderizarCards(resultados);
+👉 Filtro vira O(1) em vez de O(n)
+
+📈 4. Escalabilidade
+Problema
+
+Tudo está no frontend → não escala bem
+
+Solução futura
+Migrar para API:
+GET /salas?busca=psicologia&andar=12&vazia=false
+Paginação:
+?page=1&limit=20
+Lazy loading de dados
+🔐 5. Segurança
+⚠️ Risco atual
+
+Uso de innerHTML direto → vulnerável a XSS
+
+🔹 Correção
+
+Use textContent:
+
+const h3 = document.createElement("h3");
+h3.textContent = nomeFinal;
+
+Ou sanitize:
+
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[m]);
+}
+🧱 6. Confiabilidade & Estabilidade
+🔹 Validação de dados
+function validarItem(e) {
+  return e && e.sala && e.andar !== undefined;
+}
+🔹 Fallback seguro
+const nomeFinal = item.nome || "Não informado";
+🧹 7. Manutenibilidade
+🔹 Separar responsabilidades
+
+Hoje tudo está junto. Ideal:
+
+/data
+/ui
+/services
+/utils
+/state
+🔹 Evitar strings mágicas
+const CATEGORIAS = {
+  SAUDE: "Saúde",
+  DIREITO: "Direito"
+};
+🔹 Tipagem (MESMO em JS)
+/**
+ * @typedef {Object} Sala
+ * @property {number|string} andar
+ * @property {string} sala
+ * @property {string} nome
+ * @property {string} desc
+ * @property {string} cat
+ * @property {boolean} vazia
+ */
+🔗 8. Integração
+🔹 Preparar para API
+async function fetchDados() {
+  try {
+    const res = await fetch("/api/salas");
+    return await res.json();
+  } catch (e) {
+    console.error("Erro ao carregar dados", e);
+    return [];
+  }
+}
+🔹 Webhooks / eventos
+window.dispatchEvent(new CustomEvent("salasAtualizadas"));
+📊 9. Observabilidade
+🔹 Logging estruturado
+console.info("Filtro aplicado", estado);
+🔹 Monitorar performance
+console.time("render");
+renderizarCards(lista);
+console.timeEnd("render");
+🔹 Tracking de uso (futuro)
+buscas mais usadas
+categorias mais clicadas
+salas mais visualizadas
+🧠 RESUMO — O QUE MAIS IMPACTA
+
+Se você fizer só 5 coisas, faça essas:
+
+🔥 Cache _search (ganho absurdo)
+🔥 Debounce na busca
+🔥 Estado único de filtros
+🔥 Evitar innerHTML (segurança)
+🔥 Indexação por categoria
+
+## Sugestão de melhorias no código pela IA
+
+// --- DADOS DE EXEMPLOS ---
+const estabelecimentos = [
+  { andar: 12, sala: "1202-1203", nome: "APA Advocacia", desc: "Dr. Paulo Sergio Avezani", cat: "Direito", vazia: false },
+  { andar: 12, sala: "1205", nome: "Drª Dayse Ayupe Lopardi", desc: "Cirurgiã Dentista", cat: "Saúde", vazia: false },
+  { andar: 12, sala: "1206", nome: "Vinicius Navarro / Gabriela Ramos", desc: "Psicanálise", cat: "Saúde", vazia: false },
+  { andar: 12, sala: "1207-1208", nome: "SOIP", desc: "Clínica Odontológica", cat: "Saúde", vazia: false },
+  { andar: 12, sala: "1211", nome: "Nuance", desc: "Espaço de Estética", cat: "Estética", vazia: false },
+  { andar: 12, sala: "1212", nome: "Dra. Daniella Saraiva / Florescer", desc: "Psicologia", cat: "Saúde", vazia: false },
+  { andar: 12, sala: "1213-1215", nome: "", desc: "", cat: "", vazia: true },
+  { andar: 6, sala: "612-615", nome: "", desc: "", cat: "", vazia: true },
+  { andar: 1, sala: "112-115", nome: "", desc: "", cat: "", vazia: true },
+];
+
+// --- CACHE DE BUSCA ---
+estabelecimentos.forEach(e => e._search = normalizar(`${e.nome} ${e.desc} ${e.sala} ${e.cat} ${e.andar}`));
+
+// --- ESTADO GLOBAL ---
+const estado = {
+  termo: "",
+  categoria: "todos",
+  apenasVazias: false,
+};
+
+// --- UTILITÁRIOS ---
+function normalizar(texto) {
+  return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-✅ Permite:
+// --- FUNÇÃO DE RENDERIZAÇÃO SEGURA ---
+function criarCard(item) {
+  const card = document.createElement("article");
+  card.className = `card ${item.vazia ? "card-vazia" : ""}`;
 
-"psiclogia" → encontra "psicologia"
-Muito melhor UX
-📊 Comparação geral
-Técnica	Performance	Memória	UX
-Atual	❌	✅	⚠️
-Pré-indexação	✅	⚠️	✅
-Debounce	✅	✅	✅
-Ranking	⚠️	⚠️	⭐
-Índice por categoria	⭐	✅	✅
-Fuse.js	⚠️	⚠️	⭐⭐⭐
-🏆 Melhor combinação (recomendada)
+  const floor = document.createElement("span");
+  floor.className = "floor";
+  floor.textContent = `${item.andar}º Andar - Sala ${item.sala}`;
+  card.appendChild(floor);
 
-Se quiser o melhor equilíbrio:
+  const titulo = document.createElement("h3");
+  titulo.textContent = item.vazia ? "SALA DISPONÍVEL" : item.nome;
+  card.appendChild(titulo);
 
-👉 Use:
+  const desc = document.createElement("p");
+  desc.textContent = item.vazia ? "Excelente oportunidade para o seu negócio. Entre em contato com a administração!" : item.desc;
+  card.appendChild(desc);
 
-✅ Pré-indexação
-✅ Debounce
-✅ Ranking simples
-(Opcional) Fuse.js
-💡 Resumo direto
+  const badge = document.createElement("span");
+  badge.className = "badge";
+  badge.textContent = item.vazia ? "Vazia" : item.cat;
+  card.appendChild(badge);
 
-Se fosse otimizar seu código HOJE:
+  return card;
+}
 
-Criar searchKey (maior ganho)
-Adicionar debounce
-Melhorar ranking
-(Opcional) usar Fuse.js
+// --- FUNÇÃO DE FILTROS COM CACHE E SEARCH ---
+function aplicarFiltros() {
+  let lista = estabelecimentos;
 
-fazer um arquivo readme com exatamente essas informações, não deixar nada de fora do markdown
+  if (estado.termo) lista = lista.filter(e => e._search.includes(estado.termo));
+  if (estado.categoria !== "todos") lista = lista.filter(e => !e.vazia && e.cat.toLowerCase() === estado.categoria.toLowerCase());
+  if (estado.apenasVazias) lista = lista.filter(e => e.vazia);
 
+  // Atualiza virtual scroll
+  atualizarVirtualScroll(lista);
+}
 
+// --- DEBOUNCE PARA BUSCA ---
+let debounceTimeout;
+function onBuscarInput(valor) {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    estado.termo = normalizar(valor);
+    aplicarFiltros();
+  }, 300);
+}
+
+// --- FILTROS POR CATEGORIA ---
+function filterCategoria(categoria, btn) {
+  ativarBotao(btn);
+  estado.categoria = categoria;
+  estado.apenasVazias = false;
+  aplicarFiltros();
+}
+
+function filterVazias(btn) {
+  ativarBotao(btn);
+  estado.apenasVazias = true;
+  estado.categoria = "todos";
+  aplicarFiltros();
+}
+
+function ativarBotao(btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+// --- TEMA ---
+function configurarTema() {
+  const btn = document.getElementById("theme-toggle");
+  const aplicar = t => {
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem("theme", t);
+  };
+  aplicar(localStorage.getItem("theme") || "light");
+  btn.addEventListener("click", () => {
+    const atual = document.documentElement.getAttribute("data-theme");
+    aplicar(atual === "dark" ? "light" : "dark");
+  });
+}
+
+// --- SKELETONS ---
+function exibirSkeletons() {
+  const container = document.getElementById("directory");
+  container.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+  Array(8).fill(null).forEach(() => {
+    const skel = document.createElement("div");
+    skel.className = "card-skeleton";
+    fragment.appendChild(skel);
+  });
+  container.appendChild(fragment);
+}
+
+// --- VIRTUAL SCROLL ---
+const container = document.getElementById("directory");
+let listaVirtual = [];
+let alturaCard = 120; // altura aproximada do card
+let qtdVisiveis = 0;
+
+function atualizarVirtualScroll(lista) {
+  listaVirtual = lista.sort((a,b) => b.andar - a.andar);
+  container.innerHTML = "";
+  container.style.height = `${listaVirtual.length * alturaCard}px`;
+  qtdVisiveis = Math.ceil(container.offsetHeight / alturaCard) + 5; // buffer extra
+  window.requestAnimationFrame(() => renderizarViewport());
+}
+
+function renderizarViewport() {
+  const scrollTop = container.scrollTop;
+  const primeiro = Math.floor(scrollTop / alturaCard);
+  const fragment = document.createDocumentFragment();
+  const fim = Math.min(primeiro + qtdVisiveis, listaVirtual.length);
+
+  for (let i = primeiro; i < fim; i++) {
+    const card = criarCard(listaVirtual[i]);
+    card.style.position = "absolute";
+    card.style.top = `${i * alturaCard}px`;
+    fragment.appendChild(card);
+  }
+
+  container.innerHTML = "";
+  container.appendChild(fragment);
+}
+
+// Atualiza enquanto o usuário rola
+container.addEventListener("scroll", renderizarViewport);
+
+// --- INICIALIZAÇÃO ---
+window.onload = () => {
+  configurarTema();
+  exibirSkeletons();
+  setTimeout(() => atualizarVirtualScroll(estabelecimentos), 500);
+};
  
