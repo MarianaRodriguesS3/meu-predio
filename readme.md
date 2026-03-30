@@ -148,6 +148,7 @@ Não sugere nada ao usuário
 Você recria todo o HTML mesmo para pequenas mudanças.
 
 🚀 Melhorias recomendadas
+
 ✅ 1. Pré-indexação (GRANDE ganho de performance)
 
 Pré-processar os dados uma única vez:
@@ -273,12 +274,14 @@ const categorias = {
 Opção B — minimizar duplicação
 evitar concatenar strings gigantes
 usar campos separados no índice
+
 ✨ 7. Melhor UX de busca
 Sugestões:
 Mostrar resultados enquanto digita
 Destacar termo buscado
 Mostrar contador:
 <p>${resultados.length} resultados encontrados</p>
+
 🧠 8. Busca fuzzy (nível profissional)
 
 Use biblioteca leve tipo:
