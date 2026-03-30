@@ -123,6 +123,7 @@ Analise o código a cima e me apresente melhorias no código para que ele tenha 
 Seu código já está bem organizado e funcional — especialmente na separação de responsabilidades e na UX inicial com skeletons 👏. Mas dá pra evoluir bastante em várias dimensões. Vou direto ao que realmente traz ganho prático.
 
 🔧 1. Usabilidade (UX/UI)
+
 ✅ Problemas
 Busca dispara a cada ação manual (não é fluida)
 Falta feedback de “digitando”
@@ -191,7 +192,9 @@ function aplicarFiltros() {
 
   renderizarCards(lista);
 }
+
 ⚡ 2. Performance (tempo de resposta)
+
 ✅ Problemas
 .map().join("") com lista grande pode travar
 Re-render completo sempre
@@ -228,7 +231,9 @@ lista.forEach(item => {
 });
 container.innerHTML = "";
 container.appendChild(fragment);
+
 💾 3. Performance de armazenamento / consultas
+
 🔹 Estrutura indexada por categoria
 const index = {
   Saude: [],
@@ -247,6 +252,7 @@ estabelecimentos.forEach(e => {
 👉 Filtro vira O(1) em vez de O(n)
 
 📈 4. Escalabilidade
+
 Problema
 
 Tudo está no frontend → não escala bem
@@ -257,7 +263,9 @@ GET /salas?busca=psicologia&andar=12&vazia=false
 Paginação:
 ?page=1&limit=20
 Lazy loading de dados
+
 🔐 5. Segurança
+
 ⚠️ Risco atual
 
 Uso de innerHTML direto → vulnerável a XSS
@@ -280,14 +288,18 @@ function escapeHTML(str) {
     "'": "&#039;"
   })[m]);
 }
+
 🧱 6. Confiabilidade & Estabilidade
+
 🔹 Validação de dados
 function validarItem(e) {
   return e && e.sala && e.andar !== undefined;
 }
 🔹 Fallback seguro
 const nomeFinal = item.nome || "Não informado";
+
 🧹 7. Manutenibilidade
+
 🔹 Separar responsabilidades
 
 Hoje tudo está junto. Ideal:
@@ -312,7 +324,9 @@ const CATEGORIAS = {
  * @property {string} cat
  * @property {boolean} vazia
  */
+
 🔗 8. Integração
+
 🔹 Preparar para API
 async function fetchDados() {
   try {
@@ -325,7 +339,9 @@ async function fetchDados() {
 }
 🔹 Webhooks / eventos
 window.dispatchEvent(new CustomEvent("salasAtualizadas"));
+
 📊 9. Observabilidade
+
 🔹 Logging estruturado
 console.info("Filtro aplicado", estado);
 🔹 Monitorar performance
