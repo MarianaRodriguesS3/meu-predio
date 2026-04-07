@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-br" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Empire State Building | Gestão de Espaços</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button
+      id="theme-toggle"
+      class="theme-btn"
+      aria-label="Alternar modo de cor"
+    >
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+    </button>
+
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Empire State Building</h1>
+        <p>
+          Encontre profissionais ou descubra o espaço ideal para o seu negócio.
+        </p>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Pesquisar por nome, sala ou especialidade..."
+          onkeyup="buscar()"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <nav class="filters">
+        <button class="filter-btn active" onclick="filter('todos', this)">
+          Todos
+        </button>
+        <button class="filter-btn" onclick="filter('saúde', this)">
+          Saúde
+        </button>
+        <button class="filter-btn" onclick="filter('direito', this)">
+          Direito
+        </button>
+        <button class="filter-btn" onclick="filter('estética', this)">
+          Estética
+        </button>
+        <button class="filter-btn" onclick="filter('educação', this)">
+          Educação
+        </button>
+        <button class="filter-btn" onclick="filter('outros', this)">
+          Outros
+        </button>
+        <button class="filter-btn btn-negocios" onclick="filterVazias(this)">
+          🏢 Salas Disponíveis
+        </button>
+      </nav>
+
+      <section class="directory" id="directory"></section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2026 Empire State Building. Todos os direitos reservados.</p>
+      <p>
+        <small>Para locação de salas, dirija-se à recepção principal.</small>
+      </p>
+    </footer>
+
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

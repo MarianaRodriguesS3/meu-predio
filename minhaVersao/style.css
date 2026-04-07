@@ -1,0 +1,304 @@
+/* 1. Variáveis de Tema */
+:root {
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-hero: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #3b82f6;
+  --accent-vazia: #10b981; /* Verde para disponibilidade/sucesso */
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --border: #e2e8f0;
+  --skeleton-bg: #e2e8f0;
+}
+
+[data-theme="dark"] {
+  --bg-body: #0f172a;
+  --bg-card: #1e293b;
+  --bg-hero: linear-gradient(135deg, #020617 0%, #1e293b 100%);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #60a5fa;
+  --accent-vazia: #34d399;
+  --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  --border: #334155;
+  --skeleton-bg: #334155;
+}
+
+/* 2. Reset Global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 3. Hero & Header */
+.hero {
+  background: var(--bg-hero);
+  color: white;
+  padding: 100px 20px;
+  text-align: center;
+  clip-path: ellipse(150% 100% at 50% 0%);
+  margin-bottom: 50px;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+/* 4. Barra de Pesquisa */
+/* 1. Container */
+.search-container {
+  position: relative;
+  max-width: 600px;
+  margin: -75px auto 40px;
+  z-index: 10;
+}
+
+/* 2. O Input */
+#searchInput {
+  position: relative;
+  z-index: 1; /* Baixamos para 1 */
+  width: 100%;
+  padding: 20px 60px 20px 30px;
+  border-radius: 50px;
+  border: none;
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* 3. A Lupa */
+.search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* AQUI ESTÁ O SEGREDO */
+  z-index: 2; /* Apenas 1 nível acima do input */
+  pointer-events: none !important;
+
+  /* Adiciona isto para teste: */
+  cursor: text;
+
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+/* 5. Filtros */
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Destaque para o botão de Salas Disponíveis */
+.btn-negocios {
+  border: 2px solid var(--accent-vazia);
+  color: var(--accent-vazia);
+}
+
+.btn-negocios.active,
+.btn-negocios:hover {
+  background: var(--accent-vazia) !important;
+  color: white !important;
+}
+
+/* 6. Grid de Diretório */
+.directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  padding-bottom: 80px;
+}
+
+/* 7. Card Principal */
+.card {
+  background: var(--bg-card);
+  padding: 35px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  animation: fadeInUp 0.6s ease forwards;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card .floor {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+.card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+
+.badge {
+  align-self: flex-start;
+  margin-top: 20px;
+  padding: 6px 16px;
+  background: var(--bg-body);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* 8. Estilo Especial: CARD VAZIO */
+.card-vazia {
+  border: 2px dashed var(--accent-vazia);
+  background: rgba(16, 185, 129, 0.03); /* Fundo verde clarinho */
+}
+
+.card-vazia h3 {
+  color: var(--accent-vazia);
+  font-style: italic;
+}
+.card-vazia .floor {
+  color: var(--accent-vazia);
+}
+.card-vazia .badge {
+  background: var(--accent-vazia);
+  color: white;
+}
+
+/* 9. Skeleton Screen */
+.card-skeleton {
+  background: var(--bg-card);
+  padding: 35px;
+  border-radius: 24px;
+  height: 220px;
+}
+
+.skeleton {
+  background: var(--skeleton-bg);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sk-floor {
+  width: 40%;
+  height: 15px;
+}
+.sk-title {
+  width: 80%;
+  height: 25px;
+}
+.sk-desc {
+  width: 100%;
+  height: 50px;
+}
+
+/* 10. Botão Dark Mode */
+.theme-btn {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  z-index: 1000;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.footer {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+}
