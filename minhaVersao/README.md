@@ -1,6 +1,6 @@
 ## 🚀 Comentários de melhoria segundo a IA
 
-Analise o código a cima e me apresente melhorias no código para que ele tenha uma melhor Usabilidade (UX/UI), Tempo de resposta (Performance), melhor Performance de armazenamento (Consultas otimizadas), Escalabilidade, Segurança Confiabilidade e estabilidade, Manutenibilidade, Integração e Observabilidade.
+Analise o código a cima e me apresente melhorias no código para que ele tenha uma melhor Usabilidade (UX/UI), Tempo de resposta (Performance), melhor Performance de armazenamento (Consultas otimizadas), Escalabilidade, Segurança, Confiabilidade e estabilidade, Manutenibilidade, Integração e Observabilidade.
 
 Seu código já está bem organizado e funcional — especialmente na separação de responsabilidades e na UX inicial com skeletons 👏. Mas dá pra evoluir bastante em várias dimensões. Vou direto ao que realmente traz ganho prático.
 
@@ -42,12 +42,12 @@ async function carregarDados() {
 
 🔹 Melhor feedback vazio
 
-container.innerHTML = `
+container.innerHTML = 
   <div class="empty-state">
     <h3>Nenhum resultado encontrado</h3>
     <p>Tente ajustar sua busca ou filtros.</p>
   </div>
-`;
+;
 
 🔹 Combinar busca + filtro
 
