@@ -42,12 +42,12 @@ async function carregarDados() {
 
 🔹 Melhor feedback vazio
 
-container.innerHTML = 
+container.innerHTML = `
   <div class="empty-state">
     <h3>Nenhum resultado encontrado</h3>
     <p>Tente ajustar sua busca ou filtros.</p>
   </div>
-;
+`;
 
 🔹 Combinar busca + filtro
 
